@@ -45,16 +45,6 @@ function addButton(buttonName, index) {
     return button;
 }
 
-// Display a user-friendly version of the read status.
-function readStatus(readStatus) {
-    if (readStatus) {
-        return "Already read";
-    }
-
-    else {
-        return "Not read yet";
-    }
-}
 
 
 function displayBooks() {
@@ -114,15 +104,17 @@ function refreshBooks() {
     let buttons = document.querySelectorAll("button");
     buttons.forEach((button) => {
         button.addEventListener("click", (event) => {
+            let index = event.target.getAttribute("data");
+
             if (event.target.value == "Read") {
-                let index = event.target.getAttribute("data");
                 myLibrary[index].updateRead();
-                refreshBooks();
             }
 
             if (event.target.value == "Delete") {
-
+                myLibrary.splice(index, 1);
             }
+
+            refreshBooks();
         });
     });
 }
