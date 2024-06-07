@@ -26,6 +26,17 @@ Book.prototype.addToLibrary = function () {
     myLibrary.push(this);
 }
 
+// Display a user-friendly version of the read status.
+Book.prototype.readStatus = function() {
+    if (this.read) {
+        return "Already read";
+    }
+
+    else {
+        return "Not read yet";
+    }
+}
+
 
 // Get content from the form and create a new book object in the myLibrary array.
 //
@@ -67,7 +78,7 @@ function displayBooks() {
                 let cell = document.createElement("td");
 
                 if (key == "read") {
-                    cell.textContent = readStatus(book[key]);
+                    cell.textContent = book.readStatus();
                 }
 
                 else {
