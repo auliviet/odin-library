@@ -21,20 +21,52 @@ Book.prototype.updateRead = function () {
 }
 
 
-// Get content from the form and create a new book object in the myLibrary array.
-function addBookToLibrary(newBook) {
-
-
-    myLibrary.push(newBook);
+// Add current object to myLibrary array.
+Book.prototype.addToLibrary = function () {
+    myLibrary.push(this);
 }
+
+
+// Get content from the form and create a new book object in the myLibrary array.
+//
+// TO BE ADDED
+//
+function addBookToLibrary() {
+}
+
+
+// Create a new button to be displayed in the form.
+function addButton(buttonName, index) {
+    let button = document.createElement("button");
+    button.textContent = buttonName;
+    button.setAttribute("value", buttonName);
+    button.setAttribute("data", index);
+
+    return button;
+}
+
+// Display a user-friendly version of the read status.
+function readStatus(readStatus) {
+    if (readStatus) {
+        return "Already read";
+    }
+
+    else {
+        return "Not read yet";
+    }
+}
+
 
 function displayBooks() {
 // Display each book in myLibrary on the page.
 
     let table = document.querySelector("tbody");
+    let index = 0;
 
     for (book of myLibrary) {
+
         let row = document.createElement("tr");
+        row.classList = "row";
 
         for (key in book) {
 
@@ -43,22 +75,65 @@ function displayBooks() {
 
                 // Fill each cell in the table with the content of the object
                 let cell = document.createElement("td");
-                cell.textContent = book[key];
+
+                if (key == "read") {
+                    cell.textContent = readStatus(book[key]);
+                }
+
+                else {
+                    cell.textContent = book[key];
+                }
                 row.appendChild(cell);
             }
-
-            
         }
+
+        // Add buttons to the last cell in the row
+        let cell = document.createElement("td");
+        
+        cell.appendChild(addButton("Read", index));
+        cell.appendChild(addButton("Delete", index)); 
+        row.appendChild(cell);
 
         // Add the row of values to the table
         table.appendChild(row);
+
+        // Increment the index
+        index++;
     }
 }
 
+
+// Update the table by removing old data and replacing with updated data.
+function refreshBooks() {
+    let rows = document.querySelectorAll(".row");
+    rows.forEach((row) => row.remove()); 
+
+    displayBooks();
+
+    // Event listeners
+    let buttons = document.querySelectorAll("button");
+    buttons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+            if (event.target.value == "Read") {
+                let index = event.target.getAttribute("data");
+                myLibrary[index].updateRead();
+                refreshBooks();
+            }
+
+            if (event.target.value == "Delete") {
+
+            }
+        });
+    });
+}
+
+
+
+
 // For testing
 const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
-addBookToLibrary(theHobbit);
-const otherBook = new Book("Other book", "Fake author", 200, false);
-addBookToLibrary(otherBook);
+theHobbit.addToLibrary();
+const otherBook = new Book("Other book", "Fake author", 200, true);
+otherBook.addToLibrary();
 
-displayBooks();
+refreshBooks();
