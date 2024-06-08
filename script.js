@@ -21,13 +21,8 @@ Book.prototype.updateRead = function () {
 }
 
 
-// Add current object to myLibrary array.
-Book.prototype.addToLibrary = function () {
-    myLibrary.push(this);
-}
-
 // Display a user-friendly version of the read status.
-Book.prototype.readStatus = function() {
+Book.prototype.displayRead = function() {
     if (this.read) {
         return "Already read";
     }
@@ -39,16 +34,29 @@ Book.prototype.readStatus = function() {
 
 
 // Get content from the form and create a new book object in the myLibrary array.
-//
-// TO BE ADDED
-//
 function addBookToLibrary() {
+    const book = new Book;
+    
+    // Select the form fields
+    let inputs = document.querySelectorAll("input");
+    let select = document.querySelector("select");
+
+    // Fill the book object
+    for (input of inputs) {
+        book[input.name] = input.value;
+    }
+    
+    // Add the new book to myLibrary array
+    myLibrary.push(book);
+
+   displayLibraryTable();
 }
 
 
 // Create a new button to be displayed in the form.
-function addButton(buttonName, index) {
+function addBookButtons(buttonName, index) {
     let button = document.createElement("button");
+
     button.textContent = buttonName;
     button.setAttribute("value", buttonName);
     button.setAttribute("data", index);
@@ -57,10 +65,47 @@ function addButton(buttonName, index) {
 }
 
 
+// Create the event listeners used on the page.
+function addEventListeners() {
 
-function displayBooks() {
+    let buttons = document.querySelectorAll("button");
+    buttons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+            let index = event.target.getAttribute("data");
+
+            switch (event.target.value) {
+                case "Read":
+                    myLibrary[index].updateRead();
+                    displayLibraryTable();
+                    break;
+                
+                case "Delete":
+                    myLibrary.splice(index, 1);
+                    displayLibraryTable();
+                    break;
+                
+                case "submit":
+                    event.preventDefault(); // Prevent reloading the page
+                    addBookToLibrary();
+                    displayLibraryTable();
+                    break;
+
+                default:
+                    break;
+            }
+        });
+    });    
+}
+
+
+function displayLibraryTable() {
 // Display each book in myLibrary on the page.
+   
+    // Delete any existing data displayed on the page to avoid duplicating content
+    let rows = document.querySelectorAll(".row");
+    rows.forEach((row) => row.remove()); 
 
+    // Build the table from the myLibrary data
     let table = document.querySelector("tbody");
     let index = 0;
 
@@ -78,7 +123,7 @@ function displayBooks() {
                 let cell = document.createElement("td");
 
                 if (key == "read") {
-                    cell.textContent = book.readStatus();
+                    cell.textContent = book.displayRead();
                 }
 
                 else {
@@ -91,8 +136,8 @@ function displayBooks() {
         // Add buttons to the last cell in the row
         let cell = document.createElement("td");
         
-        cell.appendChild(addButton("Read", index));
-        cell.appendChild(addButton("Delete", index)); 
+        cell.appendChild(addBookButtons("Read", index));
+        cell.appendChild(addBookButtons("Delete", index)); 
         row.appendChild(cell);
 
         // Add the row of values to the table
@@ -101,42 +146,16 @@ function displayBooks() {
         // Increment the index
         index++;
     }
+
+    // Add event listeners
+    addEventListeners();
 }
-
-
-// Update the table by removing old data and replacing with updated data.
-function refreshBooks() {
-    let rows = document.querySelectorAll(".row");
-    rows.forEach((row) => row.remove()); 
-
-    displayBooks();
-
-    // Event listeners
-    let buttons = document.querySelectorAll("button");
-    buttons.forEach((button) => {
-        button.addEventListener("click", (event) => {
-            let index = event.target.getAttribute("data");
-
-            if (event.target.value == "Read") {
-                myLibrary[index].updateRead();
-            }
-
-            if (event.target.value == "Delete") {
-                myLibrary.splice(index, 1);
-            }
-
-            refreshBooks();
-        });
-    });
-}
-
-
 
 
 // For testing
 const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
-theHobbit.addToLibrary();
+myLibrary.push(theHobbit);
 const otherBook = new Book("Other book", "Fake author", 200, true);
-otherBook.addToLibrary();
+myLibrary.push(otherBook);
 
-refreshBooks();
+displayLibraryTable();
