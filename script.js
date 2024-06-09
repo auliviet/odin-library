@@ -1,3 +1,7 @@
+//
+// GLOBAL VARIABLES AND PROTOTYPES
+//
+
 const myLibrary = [];
 
 // Book object
@@ -32,6 +36,9 @@ Book.prototype.displayRead = function() {
     }
 }
 
+//
+// NEW BOOK FORM
+//
 
 // Get content from the form and create a new book object in the myLibrary array.
 function addBookToLibrary() {
@@ -45,6 +52,8 @@ function addBookToLibrary() {
     for (input of inputs) {
         book[input.name] = input.value;
     }
+
+    console.log(select.selectedOptions);
     
     // Add the new book to myLibrary array
     myLibrary.push(book);
@@ -52,6 +61,23 @@ function addBookToLibrary() {
    displayLibraryTable();
 }
 
+// Refresh the data in the form
+
+// Create the events for the new book form.
+function addFormEvents() {
+    let submitButton = document.querySelector(".submit");
+    submitButton.addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent reloading the page
+        addBookToLibrary();
+        displayLibraryTable();
+
+    });
+}
+
+
+//
+// LIBRARY TABLE
+//
 
 // Create a new button to be displayed in the form.
 function addBookButtons(buttonName, index) {
@@ -65,8 +91,8 @@ function addBookButtons(buttonName, index) {
 }
 
 
-// Create the event listeners used on the page.
-function addEventListeners() {
+// Create the event listeners for the library table.
+function addBookEvents() {
 
     let buttons = document.querySelectorAll("button");
     buttons.forEach((button) => {
@@ -81,12 +107,6 @@ function addEventListeners() {
                 
                 case "Delete":
                     myLibrary.splice(index, 1);
-                    displayLibraryTable();
-                    break;
-                
-                case "submit":
-                    event.preventDefault(); // Prevent reloading the page
-                    addBookToLibrary();
                     displayLibraryTable();
                     break;
 
@@ -148,14 +168,21 @@ function displayLibraryTable() {
     }
 
     // Add event listeners
-    addEventListeners();
+    addBookEvents();
 }
 
 
-// For testing
+//
+// DEBUGGING AND TESTING
+//
+
 const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
 myLibrary.push(theHobbit);
 const otherBook = new Book("Other book", "Fake author", 200, true);
 myLibrary.push(otherBook);
 
+//
+// MAIN FUNCTIONS
+//
 displayLibraryTable();
+addFormEvents();
