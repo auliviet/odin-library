@@ -50,18 +50,30 @@ function addBookToLibrary() {
 
     // Fill the book object
     for (input of inputs) {
+        // Get the value of the input fields
         book[input.name] = input.value;
     }
 
-    console.log(select.selectedOptions);
+    // Get the value of the select field and convert it to boolean type
+    book.read = (select.selectedOptions[0].value == "true" ? true : false); 
+    console.log(book.read);
     
     // Add the new book to myLibrary array
     myLibrary.push(book);
 
-   displayLibraryTable();
+   refreshForm();
 }
 
 // Refresh the data in the form
+function refreshForm() {
+
+    // Select the form fields
+    let inputs = document.querySelectorAll("input");
+    
+    for (input of inputs) {
+        input.value = "";
+    }
+}
 
 // Create the events for the new book form.
 function addFormEvents() {
@@ -70,7 +82,6 @@ function addFormEvents() {
         event.preventDefault(); // Prevent reloading the page
         addBookToLibrary();
         displayLibraryTable();
-
     });
 }
 
@@ -102,17 +113,15 @@ function addBookEvents() {
             switch (event.target.value) {
                 case "Read":
                     myLibrary[index].updateRead();
-                    displayLibraryTable();
                     break;
                 
                 case "Delete":
                     myLibrary.splice(index, 1);
-                    displayLibraryTable();
-                    break;
-
-                default:
                     break;
             }
+            
+            displayLibraryTable();
+            
         });
     });    
 }
