@@ -188,10 +188,12 @@ function displayLibraryTable() {
 // DEBUGGING AND TESTING
 //
 
-const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
+const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, true);
 myLibrary.push(theHobbit);
-const otherBook = new Book("Other book", "Fake author", 200, true);
-myLibrary.push(otherBook);
+const usageDuMonde = new Book("L'usage Du Monde", "Nicolas Bouvier", 309, false);
+myLibrary.push(usageDuMonde);
+const shantaram = new Book("Shantaram", "Gregory David Roberts", 936, true)
+myLibrary.push(shantaram)
 
 //
 // MAIN FUNCTIONS
