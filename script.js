@@ -158,6 +158,9 @@ function displayLibraryTable() {
                 else {
                     cell.textContent = book[key];
                 }
+
+                // Add the appropriate headers
+                cell.setAttribute("headers", key);
                 row.appendChild(cell);
             }
         }
