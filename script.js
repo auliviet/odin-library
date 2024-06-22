@@ -1,10 +1,3 @@
-//
-// GLOBAL VARIABLES AND PROTOTYPES
-//
-
-const myLibrary = [];
-
-// Book object
 class Book {
     constructor(title, author, pages, read) {
         this.title = title;
@@ -36,9 +29,6 @@ class Book {
     }
 }
 
-//
-// NEW BOOK FORM
-//
 
 class NewBookForm {
 
@@ -59,7 +49,7 @@ class NewBookForm {
         book.read = (select.selectedOptions[0].value == "true" ? true : false); 
         
         // Add the new book to myLibrary array
-        myLibrary.push(book);
+        Library.add(book);
         NewBookForm.refreshForm();
     }
 
@@ -78,107 +68,111 @@ class NewBookForm {
         submitButton.addEventListener("click", (event) => {
             event.preventDefault(); // Prevent reloading the page
             NewBookForm.addBookToLibrary();
-            displayLibraryTable();
+            Library.displayLibrary();
         });
     }
 }
 
+class Library {
+    static myNewLibrary = [];
 
-//
-// LIBRARY TABLE
-//
+    static add(book) {
+        this.myNewLibrary.push(book);
+    }
 
-// Create a new button to be displayed in the form.
-function addBookButtons(buttonName, index) {
-    let button = document.createElement("button");
+    static get books() {
+        return this.myNewLibrary;
+    }
 
-    button.textContent = buttonName;
-    button.setAttribute("value", buttonName);
-    button.setAttribute("data", index);
+    static displayLibrary() {
+        // Delete any existing data displayed on the page to avoid duplicating content
+        let rows = document.querySelectorAll(".row");
+        rows.forEach((row) => row.remove()); 
 
-    return button;
-}
+        // Build the table from the myLibrary data
+        let table = document.querySelector("tbody");
+        let index = 0;
 
+        for (let book of Library.books) {
 
-// Create the event listeners for the library table.
-function addBookEvents() {
+            let row = document.createElement("tr");
+            row.classList = "row";
 
-    let buttons = document.querySelectorAll("button");
-    buttons.forEach((button) => {
-        button.addEventListener("click", (event) => {
-            let index = event.target.getAttribute("data");
+            for (let key in book) {
 
-            switch (event.target.value) {
-                case "Read":
-                    myLibrary[index].updateRead();
-                    break;
-                
-                case "Delete":
-                    myLibrary.splice(index, 1);
-                    break;
-            }
-            
-            displayLibraryTable();
-            
-        });
-    });    
-}
+                // Go through each book attribute excluding the methods defined in the prototype
+                if (book.hasOwnProperty(key)) {
 
+                    // Fill each cell in the table with the content of the object
+                    let cell = document.createElement("td");
 
-function displayLibraryTable() {
-// Display each book in myLibrary on the page.
-   
-    // Delete any existing data displayed on the page to avoid duplicating content
-    let rows = document.querySelectorAll(".row");
-    rows.forEach((row) => row.remove()); 
+                    if (key == "read") {
+                        cell.textContent = book.readStatus;
+                    }
 
-    // Build the table from the myLibrary data
-    let table = document.querySelector("tbody");
-    let index = 0;
+                    else {
+                        cell.textContent = book[key];
+                    }
 
-    for (book of myLibrary) {
-
-        let row = document.createElement("tr");
-        row.classList = "row";
-
-        for (key in book) {
-
-            // Go through each book attribute excluding the methods defined in the prototype
-            if (book.hasOwnProperty(key)) {
-
-                // Fill each cell in the table with the content of the object
-                let cell = document.createElement("td");
-
-                if (key == "read") {
-                    cell.textContent = book.readStatus;
+                    // Add the appropriate headers
+                    cell.setAttribute("headers", key);
+                    row.appendChild(cell);
                 }
-
-                else {
-                    cell.textContent = book[key];
-                }
-
-                // Add the appropriate headers
-                cell.setAttribute("headers", key);
-                row.appendChild(cell);
             }
+
+            // Add buttons to the last cell in the row
+            let cell = document.createElement("td");
+            
+            cell.appendChild(Library.addBookButtons("Read", index));
+            cell.appendChild(Library.addBookButtons("Delete", index)); 
+            row.appendChild(cell);
+
+            // Add the row of values to the table
+            table.appendChild(row);
+
+            // Increment the index
+            index++;
         }
 
-        // Add buttons to the last cell in the row
-        let cell = document.createElement("td");
-        
-        cell.appendChild(addBookButtons("Read", index));
-        cell.appendChild(addBookButtons("Delete", index)); 
-        row.appendChild(cell);
-
-        // Add the row of values to the table
-        table.appendChild(row);
-
-        // Increment the index
-        index++;
+        // Add event listeners
+        Library.addBookEvents();
     }
 
-    // Add event listeners
-    addBookEvents();
+    // Create a new button to be displayed in the form.
+    static addBookButtons(buttonName, index) {
+        let button = document.createElement("button");
+    
+        button.textContent = buttonName;
+        button.setAttribute("value", buttonName);
+        button.setAttribute("data", index);
+    
+        return button;
+    }
+
+    // Create the event listeners for the library table.
+    static addBookEvents() {
+
+        let buttons = document.querySelectorAll("button");
+        buttons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                let index = event.target.getAttribute("data");
+    
+                switch (event.target.value) {
+                    case "Read":
+                        Library.books[index].updateRead();
+                        break;
+                    
+                    case "Delete":
+                        Library.books.splice(index, 1);
+                        break;
+                }
+                
+                Library.displayLibrary();
+                
+            });
+        });    
+    }
+    
 }
 
 
@@ -187,14 +181,14 @@ function displayLibraryTable() {
 //
 
 const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, true);
-myLibrary.push(theHobbit);
+Library.add(theHobbit);
 const usageDuMonde = new Book("L'usage Du Monde", "Nicolas Bouvier", 309, false);
-myLibrary.push(usageDuMonde);
+Library.add(usageDuMonde);
 const shantaram = new Book("Shantaram", "Gregory David Roberts", 936, true)
-myLibrary.push(shantaram)
+Library.add(shantaram)
 
 //
 // MAIN FUNCTIONS
 //
-displayLibraryTable();
+Library.displayLibrary();
 NewBookForm.addFormEvents();
