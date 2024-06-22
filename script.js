@@ -5,34 +5,34 @@
 const myLibrary = [];
 
 // Book object
-function Book(title, author, pages, read) {
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-}
-
-
-// Update the read status of a book.
-Book.prototype.updateRead = function () {
-    if (this.read == true) {
-        this.read = false;
+class Book {
+    constructor(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+         this.read = read;
     }
 
-    else {
-        this.read = true;
+    // Change the read status
+    updateRead() {
+        if (this.read == true) {
+            this.read = false;
+        }
+    
+        else {
+            this.read = true;
+        }
     }
-}
-
-
-// Display a user-friendly version of the read status.
-Book.prototype.displayRead = function() {
-    if (this.read) {
-        return "Already read";
-    }
-
-    else {
-        return "Not read yet";
+    
+    // Display a user-friendly version of the read status.
+    get readStatus()  {
+        if (this.read) {
+            return "Already read";
+        }
+    
+        else {
+            return "Not read yet";
+        }
     }
 }
 
@@ -152,7 +152,7 @@ function displayLibraryTable() {
                 let cell = document.createElement("td");
 
                 if (key == "read") {
-                    cell.textContent = book.displayRead();
+                    cell.textContent = book.readStatus;
                 }
 
                 else {
