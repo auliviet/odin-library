@@ -10,7 +10,7 @@ class Book {
         this.title = title;
         this.author = author;
         this.pages = pages;
-         this.read = read;
+        this.read = read;
     }
 
     // Change the read status
@@ -40,49 +40,47 @@ class Book {
 // NEW BOOK FORM
 //
 
-// Get content from the form and create a new book object in the myLibrary array.
-function addBookToLibrary() {
-    const book = new Book;
-    
-    // Select the form fields
-    let inputs = document.querySelectorAll("input");
-    let select = document.querySelector("select");
+class NewBookForm {
 
-    // Fill the book object
-    for (input of inputs) {
-        // Get the value of the input fields
-        book[input.name] = input.value;
+    static addBookToLibrary() {
+        const book = new Book;
+    
+        // Select the form fields
+        let inputs = document.querySelectorAll("input");
+        let select = document.querySelector("select");
+
+        // Fill the book object
+        for (let input of inputs) {
+            // Get the value of the input fields
+            book[input.name] = input.value;
+        }
+
+        // Get the value of the select field and convert it to boolean type
+        book.read = (select.selectedOptions[0].value == "true" ? true : false); 
+        
+        // Add the new book to myLibrary array
+        myLibrary.push(book);
+        NewBookForm.refreshForm();
     }
 
-    // Get the value of the select field and convert it to boolean type
-    book.read = (select.selectedOptions[0].value == "true" ? true : false); 
-    console.log(book.read);
-    
-    // Add the new book to myLibrary array
-    myLibrary.push(book);
-
-   refreshForm();
-}
-
-// Refresh the data in the form
-function refreshForm() {
-
-    // Select the form fields
-    let inputs = document.querySelectorAll("input");
-    
-    for (input of inputs) {
-        input.value = "";
+    static refreshForm() {
+        // Select the form fields
+        let inputs = document.querySelectorAll("input");
+            
+        // Ensure the form is empty
+        for (let input of inputs) {
+            input.value = "";
+        }
     }
-}
 
-// Create the events for the new book form.
-function addFormEvents() {
-    let submitButton = document.querySelector(".submit");
-    submitButton.addEventListener("click", (event) => {
-        event.preventDefault(); // Prevent reloading the page
-        addBookToLibrary();
-        displayLibraryTable();
-    });
+    static addFormEvents() {
+        let submitButton = document.querySelector(".submit");
+        submitButton.addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent reloading the page
+            NewBookForm.addBookToLibrary();
+            displayLibraryTable();
+        });
+    }
 }
 
 
@@ -199,4 +197,4 @@ myLibrary.push(shantaram)
 // MAIN FUNCTIONS
 //
 displayLibraryTable();
-addFormEvents();
+NewBookForm.addFormEvents();
